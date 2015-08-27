@@ -1,5 +1,6 @@
 package egat.birdorov.news_srod;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Explicit
     private UserTABLE objUserTABLE;
+    private NewsTABLE objNewsTABLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,10 +20,29 @@ public class MainActivity extends AppCompatActivity {
         // Create & Connected Database
         createConnected();
 
+        // Test Add New Value
+        // testerAddValue();
+
+        // Delete All Data
+        deleteAllData();
+
     }   // onCreate
+
+    private void deleteAllData() {
+        SQLiteDatabase objSqLiteDatabase = openOrCreateDatabase("srod.db", MODE_PRIVATE, null);
+        objSqLiteDatabase.delete("userTABLE", null, null);
+        objSqLiteDatabase.delete("newsTABLE", null, null);
+        
+    }
+
+    private void testerAddValue() {
+        objUserTABLE.addNewUser("testUser", "estPass", "ทดสอบชื่อ");
+        objNewsTABLE.addNews("27 Aug 2015", "testHead", "testDetail", "http//Image", "Egat");
+    }
 
     private void createConnected() {
         objUserTABLE = new UserTABLE(this);
+        objNewsTABLE = new NewsTABLE(this);
     }
 
     @Override
