@@ -15,7 +15,7 @@ public class MyOpenHelper extends SQLiteOpenHelper{
     private static final String CREATE_USER_TABLE = "create table userTABLE " +
             "(_id integer primary key, User text, Password text, Name text);";
     private static final String CREAT_NEWS_TABLE = "create table newsTABLE " +
-            "(_id integer primary key, Date text, Head text, Detail text, Image text, Owner text)"
+            "(_id integer primary key, Date text, Head text, Detail text, Image text, Owner text)";
 
 
     public MyOpenHelper(Context context) {
