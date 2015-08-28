@@ -1,5 +1,7 @@
 package egat.birdorov.news_srod;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,11 +31,18 @@ public class MainActivity extends AppCompatActivity {
     // Explicit
     private UserTABLE objUserTABLE;
     private NewsTABLE objNewsTABLE;
+    private EditText userEditText, passwordEditText;
+    private Button loginButton;
+    private String userString, passwordString;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Bind Widget
+        bindWidget();
 
         // Create & Connected Database
         createConnected();
@@ -44,7 +56,77 @@ public class MainActivity extends AppCompatActivity {
         // Synchronize JSON to SQLite
         synJSONtoSQLite();
 
+        // Button Controller
+        buttonController();
+
     }   // onCreate
+
+    private void buttonController() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                userString = userEditText.getText().toString().trim();
+                passwordString = passwordEditText.getText().toString().trim();
+
+                // Check Zero
+                if (userString.equals("") || passwordString.equals("") ) {
+
+                    // Have Space
+                    errorDialog("Have Space", "Please Fill All Blank");
+
+                } else {
+
+                    // No Space
+                    checkUser();
+                } // if
+            }
+        });
+    }   // buttonController
+
+    private void checkUser() {
+
+        try {
+            String strMyResult[] = objUserTABLE.searchUser(userString);
+
+            // Check Password
+            if (passwordString.equals(strMyResult[2])) {
+
+                // Intent to Listnews
+
+            } else {
+                errorDialog("Password False", "Plaese Try Again Password False");
+            }
+
+        } catch (Exception e) {
+            errorDialog("ไม่มี User", "ไม่มี" + userString + " ในฐานข้อมูลของเรา");
+        }
+
+
+    }   // check user
+
+    private void errorDialog(String strTitle, String strMessage) {
+
+        AlertDialog.Builder objBuilder = new AlertDialog.Builder(this);
+        objBuilder.setIcon(R.drawable.danger);
+        objBuilder.setTitle(strTitle);
+        objBuilder.setMessage(strMessage);
+        objBuilder.setCancelable(false);
+        objBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }   // event
+        });
+        objBuilder.show();
+
+    }   // Error Dialog
+
+    private void bindWidget() {
+        userEditText = (EditText) findViewById(R.id.edtUser);
+        passwordEditText = (EditText) findViewById(R.id.edtPassword);
+        loginButton = (Button) findViewById(R.id.btnLogin);
+    }   // bindWidget
 
     private void synJSONtoSQLite() {
 
